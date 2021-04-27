@@ -1,0 +1,18 @@
+---
+
+- name: Need to run Bootstrap openstack ansible
+  file:
+    path: /etc/openstack_deploy/need_to_run_boostrap
+    state: touch
+  when: clone_osa.changed
+
+- name: Check if need to run Bootstrap openstack ansible
+  stat:
+    path: /etc/openstack_deploy/need_to_run_boostrap
+  register: _need_to_run_boostrap
+
+- name: Bootstrap openstack ansible
+  shell: >
+    /opt/openstack-ansible/scripts/bootstrap-ansible.sh
+    && rm /etc/openstack_deploy/need_to_run_boostrap
+  when: _need_to_run_boostrap.stat.exists

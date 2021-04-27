@@ -1,0 +1,25 @@
+---
+
+networks:
+  api:
+    cidr: "192.168.1.0/24"
+    dhcp: "192.168.1.2"
+    ip:
+      vip_osa: "192.168.1.4"
+      controller1: "192.168.1.5"
+      compute1: "192.168.1.6"
+      compute2: "192.168.1.7"
+  sto:
+    cidr: "192.168.2.0/24"
+    dhcp: "192.168.2.2"
+    ip:
+      controller1: "192.168.2.5"
+      compute1: "192.168.2.6"
+      compute2: "192.168.2.7"
+  vxlan:
+    cidr: "192.168.3.0/24"
+    dhcp: "192.168.3.2"
+    ip:
+      controller1: "192.168.3.5"
+      compute1: "192.168.3.6"
+      compute2: "192.168.3.7"

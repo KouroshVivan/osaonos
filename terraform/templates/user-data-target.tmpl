@@ -1,0 +1,20 @@
+#cloud-config
+disable_root: false
+package_upgrade: true
+runcmd:
+  - apt install -y bridge-utils debootstrap tcpdump vlan python3 linux-modules-extra-$(uname -r)
+  - touch /tmp/okruncmd
+write_files:
+  - path: /root/.ssh/id_rsa
+    owner: root:root
+    permissions: 0600
+    content: |
+      ${ssh_private_key}
+
+  - path: /root/.ssh/id_rsa.pub
+    owner: root:root
+    permissions: 0600
+    content: |
+      ${ssh_public_key}
+
+output: { all: '| tee -a /var/log/cloud-init-output.log' }

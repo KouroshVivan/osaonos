@@ -1,0 +1,10 @@
+---
+
+osa_git_url: "https://opendev.org/openstack/openstack-ansible"
+osa_version: "stable/victoria"
+deployer_packages:
+  - build-essential
+  - git
+  - openssh-server
+  - python3-dev
+  - sudo

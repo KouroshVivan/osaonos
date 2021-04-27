@@ -1,0 +1,9 @@
+---
+
+- hosts: deployer
+  roles:
+    - deployer
+
+- hosts: target
+  roles:
+    - target

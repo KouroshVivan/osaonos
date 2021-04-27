@@ -1,0 +1,25 @@
+#cloud-config
+disable_root: false
+package_upgrade: true
+runcmd:
+  - export ANSIBLE_FORCE_COLOR=true
+  - export PYTHONUNBUFFERED=1
+  - git clone -b ${branch} ${repo} /opt/openstack-ansible
+  - cd /opt/openstack-ansible && scripts/bootstrap-ansible.sh
+  - mkdir /etc/openstack_deploy
+  - cp /opt/openstack-ansible/etc/openstack_deploy/user_secrets.yml /etc/openstack_deploy/
+  - /opt/openstack-ansible/scripts/pw-token-gen.py --file /etc/openstack_deploy/user_secrets.yml
+  - touch /etc/openstack-ansible/openstack-user-config.yml
+
+write_files:
+  - path: /root/.ssh/id_rsa
+    owner: root:root
+    permissions: 0600
+    content: |
+      ${ssh_private_key}
+  - path: /root/.ssh/id_rsa.pub
+    owner: root:root
+    permissions: 0600
+    content: |
+      ${ssh_public_key}
+output: { all: '| tee -a /var/log/cloud-init-output.log' }

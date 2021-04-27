@@ -1,0 +1,55 @@
+---
+
+- name: Install additionnal software packages
+  package:
+    name:
+      - bridge-utils
+      - debootstrap
+      - openssh-server
+      - tcpdump
+      - vlan
+      - python3
+      - python3-dev
+      - build-essential
+    state: latest
+
+- name: Install libvirt-dev on computes
+  package:
+    name: libvirt-dev
+  when: "'compute' in group_names"
+
+- name: Configure LVM storage
+  lvg:
+    pvs: /dev/vdb
+    vg: cinder-volumes
+    pv_options: "--metadatasize 2048"
+  when: "'controller' in group_names"
+
+- name: Enable IP forwarding
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+- name: Import netplan config file
+  template:
+    src: netplan.yaml.j2
+    dest: /etc/netplan/custom-networking.yaml
+  notify:
+    - apply netplan
+
+- name: Disable network config
+  template:
+    src: 99-disable-network-config.cfg.j2
+    dest: /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
+  notify:
+    - apply netplan
+
+- name: Delete cloud init netplan netwrk config
+  file:
+    path: /etc/netplan/50-cloud-init.yaml
+    state: absent
+  notify:
+    - apply netplan

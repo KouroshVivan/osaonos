@@ -1,0 +1,75 @@
+---
+cidr_networks:
+  container: {{ networks.api.cidr }}
+  storage: {{ networks.sto.cidr }}
+  tunnel: {{ networks.vxlan.cidr }}
+
+used_ips:
+  # inverse de 10.2.1.0/24
+  - "192.168.1.0-192.168.1.20"
+  - "192.168.2.0-192.168.2.20"
+  - "192.168.3.0-192.168.3.20"
+
+global_overrides:
+  internal_lb_vip_address: {{ networks.api.ip.vip_osa }}
+  external_lb_vip_address: "192.168.4.5"
+  management_bridge: "br-mgmt"
+  provider_networks:
+    - network:
+        container_bridge: "br-mgmt"
+        container_type: "veth"
+        container_interface: "eth1"
+        ip_from_q: "container"
+        type: "raw"
+        group_binds:
+          - all_containers
+          - hosts
+        is_container_address: true
+    - network:
+        container_bridge: "br-vxlan"
+        container_type: "veth"
+        container_interface: "eth10"
+        ip_from_q: "tunnel"
+        type: "vxlan"
+        range: "1:1000"
+        net_name: "vxlan"
+        group_binds:
+          - neutron_linuxbridge_agent
+    - network:
+        container_bridge: "br-vlan"
+        container_type: "veth"
+        container_interface: "eth12"
+        host_bind_override: "ens4"
+        type: "flat"
+        net_name: "flat"
+        group_binds:
+          - neutron_linuxbridge_agent
+    - network:
+        container_bridge: "br-storage"
+        container_type: "veth"
+        container_interface: "eth2"
+        ip_from_q: "storage"
+        type: "raw"
+        group_binds:
+          - glance_api
+          - cinder_api
+          - cinder_volume
+          - nova_compute
+          - swift_proxy
+
+# galera, memcache, rabbitmq, utility
+shared-infra_hosts:
+  controller1:
+    ip: {{ networks.api.ip.controller1 }}
+
+repo-infra_hosts:
+  controller1:
+    ip: {{ networks.api.ip.controller1 }}
+
+log_hosts:
+  controller1:
+    ip: {{ networks.api.ip.controller1 }}
+
+haproxy_hosts:
+  controller1:
+    ip: {{ networks.api.ip.controller1 }}

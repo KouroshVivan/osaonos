@@ -1,0 +1,15 @@
+[all]
+
+[deployer]
+deployer1 ansible_host=${deployer1_ip}
+
+[target:children]
+controller
+compute
+
+[compute]
+compute1 ansible_host=${compute1_ip}
+compute2 ansible_host=${compute2_ip}
+
+[controller]
+controller1 ansible_host=${controller1_ip}
