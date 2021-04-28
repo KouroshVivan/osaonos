@@ -1,1 +1,11 @@
 ---
+
+nova_nova_conf_overrides:
+  filter_scheduler:
+    ram_weight_multiplier: "-1"
+    max_instances_per_host: "5"
+
+masakari_masakari_conf_overrides:
+  DEFAULT:
+# https://review.opendev.org/c/openstack/openstack-ansible-os_masakari/+/786775
+    masakari_api_listen: {{ networks.api.ip.controller1 }}
